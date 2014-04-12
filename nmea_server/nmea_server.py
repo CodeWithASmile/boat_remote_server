@@ -32,7 +32,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         Devd.Rly(8,1,0)
         time.sleep(0.2)
         Devd.Rly(8,0,0)
-        time.sleep(8,1,0)
+        time.sleep(0.2)
         Devd.Rly(8,1,0)
 
 
