@@ -48,6 +48,18 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             data = f.read()
             f.close()
         self.wfile.write(data)
+
+    def do_POST(self):
+        """Respond to a POST request."""
+        # Send response headers
+        print self.path
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+        path = self.path.lstrip('/')
+        if (path == "toggle_lights"):
+            print "Toggling lights!"
+            
         
 
 if __name__ == '__main__':
