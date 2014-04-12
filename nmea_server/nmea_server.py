@@ -33,11 +33,12 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def toggle_lights(self):
         
 
-        print "Current relay state(?): %b" + self.get_relay_state()
+        print "Current relay state(?): %b" % self.get_relay_state()
         Devd.Rly(8,1,0)
         time.sleep(0.2)
-        print "New relay state(?): %b" + self.get_relay_state()
+        print "New relay state(?): %b" % self.get_relay_state()
         Devd.Rly(8,0,0)
+        print "Next relay state(?): %b" % self.get_relay_state()
         time.sleep(0.2)
         Devd.Rly(8,1,0)
 
