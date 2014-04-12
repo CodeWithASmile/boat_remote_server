@@ -21,12 +21,16 @@ from helper_functions import *
 from nmea_data_source import NmeaDataSource
 from config import *
 
+
+print "Initialising Relays..."
 sp = BV4111.sv3clV2_2.Connect("/dev/ttyAMA0",115200)
 Devd = BV4111.bv4111(sp,'d')
 
 # Querying relay state always fails first time, returning an empty string. Get that out of the way here.
 Devd.Send("i\r")
 Devd.Read()
+
+print "Relays initialised"
 
 
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
@@ -37,15 +41,14 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def toggle_lights(self):
         
-
         print "Current relay state(?): %s" % bin(self.get_relay_state())
         print "Current relay state(?): %s" % bin(self.get_relay_state())
         print "Current relay state(?): %s" % bin(self.get_relay_state())
         Devd.Rly(8,1,0)
         time.sleep(0.2)
-        print "New relay state(?): " + self.get_relay_state()
+        print "New relay state(?): %s" % bin(self.get_relay_state())
         Devd.Rly(8,0,0)
-        print "Next relay state(?): " + self.get_relay_state()
+        print "Next relay state(?): %s" % bin(self.get_relay_state())
         time.sleep(0.2)
         Devd.Rly(8,1,0)
 
