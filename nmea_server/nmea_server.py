@@ -21,13 +21,19 @@ from helper_functions import *
 from nmea_data_source import NmeaDataSource
 from config import *
 
+sp = BV4111.sv3clV2_2.Connect("/dev/ttyAMA0",115200)
+Devd = BV4111.bv4111(sp,'d')
+
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def toggle_lights(self):
-        sp = BV4111.sv3clV2_2.Connect("/dev/ttyAMA0",115200)
-        Devd = BV4111.bv4111(sp,'d')
-        print "Current relay state(?): %s" % Devd.Val(8)
-        #Devd.Rly(8,1,0)
+
+        print "Current relay state(?): " + Devd.Val(8)
+        Devd.Rly(8,1,0)
+        time.sleep(0.2)
+        Devd.Rly(8,0,0)
+        time.sleep(8,1,0)
+        Devd.Rly(8,1,0)
 
 
     def do_GET(self):
