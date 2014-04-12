@@ -35,20 +35,27 @@ print "Relays initialised"
 
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
-    def get_relay_state(self):
+    def get_relay_state(self, relay):
+        """Takes a relay number (1-8) and returns current state (0 or 1)"""
+        
         Devd.Send("i\r")
-        return int(Devd.Read())
+        state = int(Devd.Read())
+        mask = 1 << (relay-1)
+        
+        if mask & state > 0:
+            return 1
+        else:
+            return 0
+
 
     def toggle_lights(self):
         
-        print "Current relay state(?): %s" % bin(self.get_relay_state())
-        print "Current relay state(?): %s" % bin(self.get_relay_state())
-        print "Current relay state(?): %s" % bin(self.get_relay_state())
+        print "Current relay state(?): %s" % bin(self.get_relay_state(8))
         Devd.Rly(8,1,0)
         time.sleep(0.2)
-        print "New relay state(?): %s" % bin(self.get_relay_state())
+        print "New relay state(?): %s" % bin(self.get_relay_state(8))
         Devd.Rly(8,0,0)
-        print "Next relay state(?): %s" % bin(self.get_relay_state())
+        print "Next relay state(?): %s" % bin(self.get_relay_state(8))
         time.sleep(0.2)
         Devd.Rly(8,1,0)
 
