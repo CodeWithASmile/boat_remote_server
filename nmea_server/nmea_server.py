@@ -21,13 +21,21 @@ from nmea_data_source import NmeaDataSource
 from config import *
 
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
-        
+
+    def toggle_lights(self):
+        sp = BV4111.sv3clV2_2.Connect("/dev/ttyAMA0",115200)
+        Devd = BV4111.bv4111(sp,'d')
+        print "Current relay state(?): %s" % Devd.Val(8)
+        #Devd.Rly(8,1,0)
+
+
     def do_GET(self):
         """Respond to a GET request."""
         # Send response headers
-        print self.path
+        print "GET: %s" % self.path
         self.send_response(200)
         self.send_header("Content-type", "text/html")
+        self.send_header('Access-Control-Allow-Origin','*')
         self.end_headers()
         path = self.path.lstrip('/')
         if (path == "watch"):
@@ -52,13 +60,14 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_POST(self):
         """Respond to a POST request."""
         # Send response headers
-        print self.path
+        print "POST: %s" % self.path
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
         path = self.path.lstrip('/')
         if (path == "toggle_lights"):
             print "Toggling lights!"
+            toggle_lights()
             
         
 
