@@ -67,7 +67,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         path = self.path.lstrip('/')
         if (path == "toggle_lights"):
             print "Toggling lights!"
-            toggle_lights()
+            self.toggle_lights()
             
         
 
