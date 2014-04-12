@@ -31,6 +31,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         print "Current relay state(?): " + Devd.Val(8)
         Devd.Rly(8,1,0)
         time.sleep(0.2)
+        print "New relay state(?): " + Devd.Val(8)
         Devd.Rly(8,0,0)
         time.sleep(0.2)
         Devd.Rly(8,1,0)
