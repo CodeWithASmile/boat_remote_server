@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.6
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 ## Web server for providing NMEA data to a Pebble watch
