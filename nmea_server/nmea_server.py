@@ -34,6 +34,8 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         
 
         print "Current relay state(?): "+self.get_relay_state()
+        print "Current relay state(?): "+self.get_relay_state()
+        print "Current relay state(?): "+self.get_relay_state()
         Devd.Rly(8,1,0)
         time.sleep(0.2)
         print "New relay state(?): " + self.get_relay_state()
