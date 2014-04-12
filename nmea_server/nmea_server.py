@@ -26,12 +26,17 @@ Devd = BV4111.bv4111(sp,'d')
 
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
-    def toggle_lights(self):
+    def get_relay_state(self):
+        Devd.send("i\r")
+        return Devd.read()
 
-        print "Current relay state(?): " + Devd.Val(8)
+    def toggle_lights(self):
+        
+
+        print "Current relay state(?): %b" + get_relay_state()
         Devd.Rly(8,1,0)
         time.sleep(0.2)
-        print "New relay state(?): " + Devd.Val(8)
+        print "New relay state(?): %b" + get_relay_state()
         Devd.Rly(8,0,0)
         time.sleep(0.2)
         Devd.Rly(8,1,0)
