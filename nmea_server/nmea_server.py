@@ -24,18 +24,23 @@ from config import *
 sp = BV4111.sv3clV2_2.Connect("/dev/ttyAMA0",115200)
 Devd = BV4111.bv4111(sp,'d')
 
+# Querying relay state always fails first time, returning an empty string. Get that out of the way here.
+Devd.Send("i\r")
+Devd.Read()
+
+
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def get_relay_state(self):
         Devd.Send("i\r")
-        return Devd.Read()
+        return int(Devd.Read())
 
     def toggle_lights(self):
         
 
-        print "Current relay state(?): "+self.get_relay_state()
-        print "Current relay state(?): "+self.get_relay_state()
-        print "Current relay state(?): "+self.get_relay_state()
+        print "Current relay state(?): %s" % bin(self.get_relay_state())
+        print "Current relay state(?): %s" % bin(self.get_relay_state())
+        print "Current relay state(?): %s" % bin(self.get_relay_state())
         Devd.Rly(8,1,0)
         time.sleep(0.2)
         print "New relay state(?): " + self.get_relay_state()
