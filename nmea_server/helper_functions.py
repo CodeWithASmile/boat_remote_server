@@ -82,9 +82,9 @@ def formatLatitude(deg):
 def formatLat(deg):
     try:
         d, m = re.match('^(\d+)(\d\d\.\d+)$', deg).groups()
-        result = "%02d%s%.3f" % (d, u'\N{DEGREE SIGN}', m)
+        result = "%02d%s%.3f" % (int(d), u'\N{DEGREE SIGN}', float(m))
         return result
-    except AttributeError:
+    except AttributeError, TypeError:
         return deg
     
 
@@ -103,9 +103,9 @@ def formatLongitude(deg):
 def formatLon(deg):
     try:
         d, m = re.match('^(\d+)(\d\d\.\d+)$', deg).groups()
-        result = "%03d%s%.3f" % (d, u'\N{DEGREE SIGN}', m)
+        result = "%03d%s%.3f" % (int(d), u'\N{DEGREE SIGN}', float(m))
         return result
-    except AttributeError:
+    except AttributeError, TypeError:
         return deg
 
 def formatSog(sog):
