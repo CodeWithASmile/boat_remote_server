@@ -65,6 +65,11 @@ class NmeaDataSource(threading.Thread):
                     except ValueError as e:
                         # catches unknown message types
                         pass
+                    except:
+                        print "Something shitty has happened. Offender is:"
+                        print self.sentence
+                        raise
+
         self.socket.close()
 
     def printAllSentences(self):
