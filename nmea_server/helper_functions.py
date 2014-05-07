@@ -136,8 +136,9 @@ def formatDistanceUnit(values):
 
 def formatDepth(values):
     depth = values[0]
+    offset = values[1]
     try:
-        return "%.1f m" % float(depth);
+        return "%.1f m" % float(depth+offset);
     except ValueError:
         return depth;
 
