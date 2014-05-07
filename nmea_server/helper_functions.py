@@ -111,7 +111,7 @@ def formatLon(values):
         d, m = re.match('^(\d+)(\d\d\.\d+)$', deg).groups()
         result = "%03d%s%.3f" % (int(d), u'\N{DEGREE SIGN}', float(m))
         return result
-    except AttributeError, TypeError:
+    except (AttributeError, TypeError):
         return deg
 
 def formatSog(values):
@@ -139,7 +139,7 @@ def formatDepth(values):
         depth = values[0]
         offset = values[1]
         return "%.1f m" % float(depth+offset);
-    except ValueError, IndexError:
+    except (ValueError, IndexError):
         return depth;
 
 def formatDistanceNM(values):
