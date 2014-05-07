@@ -157,9 +157,9 @@ def formatWindAngle(values):
     try:
         a = int(float(angle))
         if (a > 180):
-            return "%03d P" % (360-a)
+            return "%d P" % (360-a)
         else:
-            return "%03d S" % a
+            return "%d S" % a
     except ValueError:
         return angle
 
