@@ -52,8 +52,11 @@ class NmeaWatchField(WatchField):
     def updateValueFromMessage(self, msg):
         values = []
         if (getattr(msg,"sentence_type",None) == self.sentence):
+            print self.sentence
             for field in self.fields:
+                print field
                 values.append(str(getattr(msg, field, ERROR_STRING)))
+            print values
             self.setValues(values)
 
     def getValue(self):
