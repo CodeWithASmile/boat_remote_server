@@ -163,6 +163,20 @@ def formatWindAngle(values):
     except ValueError:
         return angle
 
+def formatWindSpeed(values):
+    try:
+        speed = values[0]
+        unit = values[1]
+        if (unit == "N"):
+            unit = "Kts"
+        elif (unit == "K"):
+            unit = "kph"
+        elif (unit == "M"):
+            unit = "m/s"
+        return "%s %s" % (speed, unit)
+    except (ValueError, IndexError):
+        return values
+
 def formatType(values):
     t = values[0]
     return "(" + t + ")"

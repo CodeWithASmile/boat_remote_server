@@ -53,4 +53,5 @@ watchFields = [NmeaWatchField(name="lat", sentence="RMC", fields=["latitude"],
                               formatFunction=formatDistanceNM),
                NmeaWatchField(name="wind_angle", sentence="MWV", fields=["wind_angle"],
                               formatFunction=formatWindAngle),
-               NmeaWatchField(name="wind_speed", sentence="MWV", fields=["wind_speed", "wind_speed_units"])]
+               NmeaWatchField(name="wind_speed", sentence="MWV", fields=["wind_speed", "wind_speed_units"],
+                              formatFunction=formatWindSpeed)]
