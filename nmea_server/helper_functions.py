@@ -11,22 +11,22 @@ class WatchField(object):
     """Represents a field which will be displayed on a pebble watch"""
     
     def __init__(self, name, value=ERROR_STRING, formatFunction=None, timeout=5):
-        self.name = name;
-        self.value = value;
-        self.formatFunction = formatFunction;
-        self.lastUpdated = datetime.now();
-        self.timeout = timeout;
+        self.name = name
+        self.values = [value]
+        self.formatFunction = formatFunction
+        self.lastUpdated = datetime.now()
+        self.timeout = timeout
 
     def getValue(self):
         if ((datetime.now()-self.lastUpdated).seconds > self.timeout):
             return ERROR_STRING
         elif (self.formatFunction is not None):
-            return self.formatFunction(self.value)
+            return self.formatFunction(self.values)
         else:
-            return self.value
+            return ' '.join(self.values)
             
-    def setValue(self, value):
-        self.value = value;
+    def setValues(self, values):
+        self.values = values;
         self.lastUpdated = datetime.now();
 
     def getName(self):
@@ -35,27 +35,29 @@ class WatchField(object):
 class NmeaWatchField(WatchField):
     """Represents an NMEA field which will be displayed on a pebble watch"""
 
-    def __init__(self, name, properties, value=ERROR_STRING, formatFunction=None,
+    def __init__(self, name, sentence, fields, value=ERROR_STRING, formatFunction=None,
                  timeout=5):
-        self.properties=properties;
+        self.sentence=sentence
+        self.fields = fields
         super(NmeaWatchField, self).__init__(name, value=value,
                                              formatFunction=formatFunction,
                                              timeout=timeout);
 
-    def getSentences(self):
-        return self.properties.keys();
+    def getSentence(self):
+        return self.sentence;
 
-    def getProperty(self, sentence):
-        return self.properties[sentence];
+    def getFields(self):
+        return self.fields;
 
     def updateValueFromMessage(self, msg):
-        if (getattr(msg,"sentence_type",None) in self.properties.keys()):
-            prop = self.properties[msg.sentence_type]
-            value = getattr(msg, prop, ERROR_STRING)
-            self.setValue(str(value))
+        values = []
+        if (getattr(msg,"sentence_type",None) == self.sentence):
+            for field in self.fields:
+                values.add(str(getattr(msg, field, ERROR_STRING)))
+        self.setValues(values)
 
     def getValue(self):
-        if (self.value == "None"):
+        if (len(self.values) == 0):
             return ERROR_STRING;
         else:
             return super(NmeaWatchField, self).getValue();
@@ -67,7 +69,8 @@ def deg_to_dms(deg):
     m = abs(float(deg) - d) * 60
     return d, m
 
-def formatLatitude(deg):
+def formatLatitude(values):
+    deg = values[0]
     try:
         d, m = deg_to_dms(deg)
         if (d < 0):
@@ -79,7 +82,8 @@ def formatLatitude(deg):
     except ValueError:
         return deg
 
-def formatLat(deg):
+def formatLat(values):
+    deg = values[0]
     try:
         d, m = re.match('^(\d+)(\d\d\.\d+)$', deg).groups()
         result = "%02d%s%.3f" % (int(d), u'\N{DEGREE SIGN}', float(m))
@@ -88,7 +92,8 @@ def formatLat(deg):
         return deg
     
 
-def formatLongitude(deg):
+def formatLongitude(values):
+    deg = values[0]
     try:
         d, m = deg_to_dms(deg)
         if (d < 0):
@@ -100,7 +105,8 @@ def formatLongitude(deg):
     except ValueError:
         return deg
 
-def formatLon(deg):
+def formatLon(values):
+    deg = values[0]
     try:
         d, m = re.match('^(\d+)(\d\d\.\d+)$', deg).groups()
         result = "%03d%s%.3f" % (int(d), u'\N{DEGREE SIGN}', float(m))
@@ -108,36 +114,42 @@ def formatLon(deg):
     except AttributeError, TypeError:
         return deg
 
-def formatSog(sog):
+def formatSog(values):
+    sog = values[0]
     try:
         return "%.1f kts" % float(sog);
     except ValueError:
         return sog;
 
-def formatAngle(angle):
+def formatAngle(values):
+    angle = values[0]
     try:
         return "%03d%s" % (int(float(angle)),u'\N{DEGREE SIGN}');
     except ValueError:
         return angle;
 
-def formatDistanceUnit(unit):
+def formatDistanceUnit(values):
+    unit = values[0]
     if unit == "N":
         return "NM";
     return unit;
 
-def formatDepth(depth):
+def formatDepth(values):
+    depth = values[0]
     try:
         return "%.1f m" % float(depth);
     except ValueError:
         return depth;
 
-def formatDistanceNM(distance):
+def formatDistanceNM(values):
+    distance = values[0]
     try:
         return "%.1f NM" % float(distance);
     except ValueError:
         return distance
 
-def formatWindAngle(angle):
+def formatWindAngle(values):
+    angle = values[0]
     try:
         a = int(float(angle))
         if (a > 180):
@@ -147,7 +159,8 @@ def formatWindAngle(angle):
     except ValueError:
         return angle
 
-def formatType(t):
+def formatType(values):
+    t = values[0]
     return "(" + t + ")"
 
 # Test data
