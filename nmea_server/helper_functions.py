@@ -52,11 +52,11 @@ class NmeaWatchField(WatchField):
     def updateValueFromMessage(self, msg):
         values = []
         if (getattr(msg,"sentence_type",None) == self.sentence):
-            print self.sentence
+            #print self.sentence
             for field in self.fields:
-                print field
+                #print field
                 values.append(str(getattr(msg, field, ERROR_STRING)))
-            print values
+            #print values
             self.setValues(values)
 
     def getValue(self):
@@ -141,7 +141,7 @@ def formatDepth(values):
     try:
         depth = values[0]
         offset = values[1]
-        return "%.1f m" % float(depth+offset);
+        return "%.1f m" % (float(depth) + float(offset));
     except (ValueError, IndexError):
         return depth;
 
