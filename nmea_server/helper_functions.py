@@ -54,7 +54,7 @@ class NmeaWatchField(WatchField):
         if (getattr(msg,"sentence_type",None) == self.sentence):
             for field in self.fields:
                 values.append(str(getattr(msg, field, ERROR_STRING)))
-        self.setValues(values)
+            self.setValues(values)
 
     def getValue(self):
         if (len(self.values) == 0):
