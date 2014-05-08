@@ -86,12 +86,13 @@ def formatLatitude(values):
         return deg
 
 def formatLat(values):
-    deg = values[0]
     try:
+        deg = values[0]
+        dir = values[1]
         d, m = re.match('^(\d+)(\d\d\.\d+)$', deg).groups()
-        result = "%02d%s%.3f" % (int(d), u'\N{DEGREE SIGN}', float(m))
+        result = "%02d%s%.3f %s" % (int(d), u'\N{DEGREE SIGN}', float(m), dir)
         return result
-    except AttributeError, TypeError:
+    except (AttributeError, TypeError, IndexError):
         return deg
     
 
@@ -109,10 +110,11 @@ def formatLongitude(values):
         return deg
 
 def formatLon(values):
-    deg = values[0]
     try:
+        deg = values[0]
+        dir = values[1]
         d, m = re.match('^(\d+)(\d\d\.\d+)$', deg).groups()
-        result = "%03d%s%.3f" % (int(d), u'\N{DEGREE SIGN}', float(m))
+        result = "%03d%s%.3f %s" % (int(d), u'\N{DEGREE SIGN}', float(m), dir)
         return result
     except (AttributeError, TypeError):
         return deg
@@ -129,13 +131,17 @@ def formatAngle(values):
     try:
         return "%03d%s" % (int(float(angle)),u'\N{DEGREE SIGN}');
     except ValueError:
-        return angle;
+        return angle
 
-def formatDistanceUnit(values):
-    unit = values[0]
-    if unit == "N":
-        return "NM";
-    return unit;
+def formatDistance(values):
+    try:
+        distance = values[0]
+        unit = values[1]
+        if unit == "N":
+            unit == "NM"
+        return "%s %s" % (distance, unit)
+    except IndexError:
+        return distance
 
 def formatDepth(values):
     try:
@@ -168,7 +174,7 @@ def formatWindSpeed(values):
         speed = values[0]
         unit = values[1]
         if (unit == "N"):
-            unit = "Kts"
+            unit = "kts"
         elif (unit == "K"):
             unit = "kph"
         elif (unit == "M"):
