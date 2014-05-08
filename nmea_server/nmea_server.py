@@ -13,50 +13,33 @@ from select import *
 import time, sys
 import json
 import BaseHTTPServer
+import os
+import logging.config
 
-import BV4111
 import pynmea2
 
 from helper_functions import *
 from nmea_data_source import NmeaDataSource
 from config import *
 
+def setup_logging(default_path='logging.json', default_level=logging.INFO,
+    env_key='LOG_CFG'):
+    """Setup logging configuration
 
-print "Initialising Relays..."
-sp = BV4111.sv3clV2_2.Connect("/dev/ttyAMA0",115200)
-Devd = BV4111.bv4111(sp,'d')
-
-# Querying relay state always fails first time, returning an empty string. Get that out of the way here.
-Devd.Send("i\r")
-Devd.Read()
-
-print "Relays initialised"
+    """
+    path = default_path
+    value = os.getenv(env_key, None)
+    if value:
+        path = value
+    if os.path.exists(path):
+        with open(path, 'rt') as f:
+            config = json.load(f.read())
+        logging.config.dictConfig(config)
+    else:
+        logging.basicConfig(level=default_level)
 
 
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
-
-    def get_relay_state(self, relay):
-        """Takes a relay number (1-8) and returns current state (0 or 1)"""
-        
-        Devd.Send("i\r")
-        state = int(Devd.Read())
-        mask = 1 << (relay-1)
-        
-        if mask & state > 0:
-            return 1
-        else:
-            return 0
-
-
-    def toggle_lights(self):
-        
-        current_state = self.get_relay_state(8)
-
-        if current_state == 1:
-            Devd.Rly(8,0,0)
-        else:
-            Devd.Rly(8,1,0)
-
 
     def do_GET(self):
         """Respond to a GET request."""
@@ -96,11 +79,16 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         path = self.path.lstrip('/')
         if (path == "toggle_lights"):
             print "Toggling lights!"
-            self.toggle_lights()
+            control.toggle_lights()
             
         
 
 if __name__ == '__main__':
+    setup_logging()
+    logger = logging.getLogger(__name__)
+    if control:
+        import control
+        controller = Controller()
     # initialize tcp port
     nmeaDataSource = NmeaDataSource(NMEA_HOST, NMEA_PORT, watchFields)
     if not test:
@@ -112,13 +100,13 @@ if __name__ == '__main__':
     httpd = BaseHTTPServer.HTTPServer((HTTP_HOST, HTTP_PORT), MyHandler)
     print time.asctime(), "Server Starts - %s:%s" % (HTTP_HOST, HTTP_PORT)
     try:
-        print "serving forever"
+        logger.info("serving forever")
         httpd.serve_forever()
     except KeyboardInterrupt:
-        print "interrupted"
+        logger.info("interrupted")
     nmeaDataSource.close()
     nmeaDataSource.join()
     httpd.server_close()
-    print time.asctime(), "Server Stops - %s:%s" % (HTTP_HOST, HTTP_PORT)
+    logger.info(time.asctime(), "Server Stops - %s:%s" % (HTTP_HOST, HTTP_PORT))
 
     ##===================================
