@@ -19,9 +19,9 @@
             "class": "logging.handlers.RotatingFileHandler",
             "level": "INFO",
             "formatter": "simple",
-            "filename": "info.log",
+            "filename": "nmea_server_info.log",
             "maxBytes": "10485760",
-            "backupCount": "20",
+            "backupCount": "5",
             "encoding": "utf8"
         },
 
@@ -29,9 +29,9 @@
             "class": "logging.handlers.RotatingFileHandler",
             "level": "ERROR",
             "formatter": "simple",
-            "filename": "errors.log",
+            "filename": "nmea_server_errors.log",
             "maxBytes": "10485760",
-            "backupCount": "20",
+            "backupCount": "5",
             "encoding": "utf8"
         }
     },
