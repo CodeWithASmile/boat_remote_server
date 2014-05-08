@@ -17,7 +17,7 @@ class Controller(object):
     def get_relay_state(self, relay):
         """Takes a relay number (1-8) and returns current state (0 or 1)"""
         
-        self.evd.Send("i\r")
+        self.devd.Send("i\r")
         state = int(self.devd.Read())
         mask = 1 << (relay-1) 
         if mask & state > 0:
