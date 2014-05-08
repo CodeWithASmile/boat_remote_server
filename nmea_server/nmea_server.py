@@ -87,7 +87,7 @@ if __name__ == '__main__':
     setup_logging()
     logger = logging.getLogger(__name__)
     if control:
-        import control
+        from control import Controller
         controller = Controller()
     # initialize tcp port
     nmeaDataSource = NmeaDataSource(NMEA_HOST, NMEA_PORT, watchFields)
