@@ -24,11 +24,13 @@
   <ItemGroup>
     <Compile Include="config.py" />
     <Compile Include="helper_functions.py" />
+    <Compile Include="control.py" />
     <Compile Include="nmea_data_source.py" />
     <Compile Include="nmea_server.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="index.html" />
+    <Content Include="logging.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

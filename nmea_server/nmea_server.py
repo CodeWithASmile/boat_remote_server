@@ -27,7 +27,7 @@ def setup_logging(default_path='logging.json', default_level=logging.INFO,
     """Setup logging configuration
 
     """
-    path = default_path
+    path = "/home/pi/nmea_server/nmea_server/" + default_path
     value = os.getenv(env_key, None)
     if value:
         path = value
