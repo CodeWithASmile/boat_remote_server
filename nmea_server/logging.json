@@ -19,7 +19,7 @@
             "class": "logging.handlers.RotatingFileHandler",
             "level": "INFO",
             "formatter": "simple",
-            "filename": "/home/pi/nmea_server/nmea_server/logs/nmea_server_info.log",
+            "filename": "logs/nmea_server_info.log",
             "maxBytes": "10485760",
             "backupCount": "5",
             "encoding": "utf8"
@@ -29,7 +29,7 @@
             "class": "logging.handlers.RotatingFileHandler",
             "level": "ERROR",
             "formatter": "simple",
-            "filename": "/home/pi/nmea_server/nmea_server/logs/nmea_server_errors.log",
+            "filename": "logs/nmea_server_errors.log",
             "maxBytes": "10485760",
             "backupCount": "5",
             "encoding": "utf8"

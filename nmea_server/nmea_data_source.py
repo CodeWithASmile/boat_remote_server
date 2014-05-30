@@ -91,3 +91,8 @@ class NmeaDataSource(threading.Thread):
         result = json.dumps(watchData)
         return result
 
+    def getWatchField(self, field):
+        for watchField in self.watchFields:
+            if (watchField.getName() == field):
+                return watchField;
+

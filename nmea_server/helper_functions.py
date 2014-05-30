@@ -61,9 +61,70 @@ class NmeaWatchField(WatchField):
 
     def getValue(self):
         if (len(self.values) == 0):
-            return ERROR_STRING;
+            return ERROR_STRING
         else:
-            return super(NmeaWatchField, self).getValue();
+            return super(NmeaWatchField, self).getValue()
+
+class AnchorWatchField(NMEAWatchField):
+    """Represents how far boat is from its anchor"""
+
+    def __init__(self, name, sentence, fields, value=ERROR_STRING,
+                 timeout=5):
+        self.resetAnchor()
+        super(AnchorWatchField, self).__init__(name, sentence=sentence, fields=fields, value=value, 
+                                               formatFunction=None, timeout=5)
+    
+    def setAnchor(self):
+        self.anchor_lat = self.current_lat
+        self.anchor_lon = self.current_lon
+
+    def resetAnchor(self):
+        self.anchor_lat = None
+        self.anchor_lon = None
+
+    def updateValueFromMessage(self, msg):
+        super(AnchorWatchField, self).updateValueFromMessage(msg)
+        self.current_lat = self.values[0]
+        self.current_lon = self.values[1]
+
+    def getValue(self):
+        if ((datetime.now()-self.lastUpdated).seconds > self.timeout):
+            return ERROR_STRING
+        if self.anchor_lat is not None:
+            self.drift = self.calculateDrift()
+            return self.drift;
+        else:  
+            return ERROR_STRING
+            
+
+    def calculateDrift(self):
+        # Convert latitude and longitude to 
+        # spherical coordinates in radians.
+        degrees_to_radians = math.pi/180.0
+        
+        # phi = 90 - latitude
+        phi1 = (90.0 - self.anchor_lat)*degrees_to_radians
+        phi2 = (90.0 - self.current_lat)*degrees_to_radians
+        
+        # theta = longitude
+        theta1 = self.anchor_lon*degrees_to_radians
+        theta2 = self.current_lon*degrees_to_radians
+        
+        # Compute spherical distance from spherical coordinates.
+        
+        # For two locations in spherical coordinates 
+        # (1, theta, phi) and (1, theta, phi)
+        # cosine( arc length ) = 
+        #    sin phi sin phi' cos(theta-theta') + cos phi cos phi'
+        # distance = rho * arc length
+    
+        cos = (math.sin(phi1)*math.sin(phi2)*math.cos(theta1 - theta2) + 
+               math.cos(phi1)*math.cos(phi2))
+        arc = math.acos( cos )
+
+        # Remember to multiply arc by the radius of the earth 
+        # in your favorite set of units to get length.
+        return arc *6373000 #returns result in meters.
 
 # Formatting functions for watch fields
 

@@ -11,6 +11,8 @@ HTTP_PORT = 8082 # The port that the HTTP data will be output on
 NMEA_HOST = '192.168.5.200'     # The host with the NMEA TCP feed
 NMEA_PORT = 10110              # The port with the NMEA TCP feed
 
+basePath = "/home/pi/nmea_server/nmea_server";
+
 watchFields = [NmeaWatchField(name="lat", sentence="RMC", fields=["latitude"],
                               formatFunction=formatLatitude),
                NmeaWatchField(name="lon", sentence="RMC", fields=["longitude"],
@@ -44,6 +46,7 @@ watchFields = [NmeaWatchField(name="lat", sentence="RMC", fields=["latitude"],
                NmeaWatchField(name="wind_angle", sentence="MWV", fields=["wind_angle"],
                               formatFunction=formatWindAngle),
                NmeaWatchField(name="wind_speed", sentence="MWV", fields=["wind_speed", "wind_speed_units"],
-                              formatFunction=formatWindSpeed)]
+                              formatFunction=formatWindSpeed),
+               AnchorWatchField(name="drift", sentence="RMC", fields=["lat", "lon"])]
 
 control = True

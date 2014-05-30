@@ -27,7 +27,7 @@ def setup_logging(default_path='logging.json', default_level=logging.INFO,
     """Setup logging configuration
 
     """
-    path = "/home/pi/nmea_server/nmea_server/" + default_path
+    path = basePath + "/" + default_path
     value = os.getenv(env_key, None)
     if value:
         path = value
@@ -37,6 +37,11 @@ def setup_logging(default_path='logging.json', default_level=logging.INFO,
         logging.config.dictConfig(loggingConfig)
     else:
         logging.basicConfig(level=default_level)
+
+def set_anchor_watch():
+    awf = nmeaDataSource.getWatchField("drift")
+    awf.__class__ = AnchorWatchField
+    awf.setAnchor
 
 
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
@@ -80,6 +85,9 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if (path == "toggle_lights"):
             print "Toggling lights!"
             controller.toggle_lights()
+        if (path == "set_anchor_watch"):
+            print "Setting Anchor Watch!"
+            set_anchor_watch()
             
         
 
