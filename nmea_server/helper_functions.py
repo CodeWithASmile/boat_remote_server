@@ -4,6 +4,7 @@
 from datetime import datetime
 import pynmea2
 import re
+import math
 
 ERROR_STRING = "~"
 
@@ -75,6 +76,7 @@ class AnchorWatchField(NmeaWatchField):
                                                formatFunction=None, timeout=5)
     
     def setAnchor(self):
+        print "called set anchor"
         self.anchor_lat = self.current_lat
         self.anchor_lon = self.current_lon
 

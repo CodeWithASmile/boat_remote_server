@@ -39,6 +39,7 @@ def setup_logging(default_path='logging.json', default_level=logging.INFO,
         logging.basicConfig(level=default_level)
 
 def set_anchor_watch():
+    print "setting anchor watch"
     awf = nmeaDataSource.getWatchField("drift")
     awf.__class__ = AnchorWatchField
     awf.setAnchor()
