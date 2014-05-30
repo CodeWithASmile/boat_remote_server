@@ -130,7 +130,8 @@ class AnchorWatchField(NmeaWatchField):
 
         # Remember to multiply arc by the radius of the earth 
         # in your favorite set of units to get length.
-        return arc *6373000 #returns result in meters.
+        result = "%00d m" % arc *6373000 #returns result in meters.
+        return result
 
 # Formatting functions for watch fields
 
