@@ -84,8 +84,12 @@ class AnchorWatchField(NmeaWatchField):
 
     def updateValueFromMessage(self, msg):
         super(AnchorWatchField, self).updateValueFromMessage(msg)
-        self.current_lat = self.values[0]
-        self.current_lon = self.values[1]
+        try:
+            self.current_lat = self.values[0]
+            self.current_lon = self.values[1]
+        except IndexError:
+            self.current_lat = None
+            self.current_lon = None
 
     def getValue(self):
         if ((datetime.now()-self.lastUpdated).seconds > self.timeout):
