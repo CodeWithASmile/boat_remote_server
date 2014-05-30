@@ -183,7 +183,7 @@ def formatLon(values):
         d, m = re.match('^(\d+)(\d\d\.\d+)$', deg).groups()
         result = "%03d%s%.3f %s" % (int(d), u'\N{DEGREE SIGN}', float(m), dir)
         return result
-    except (AttributeError, TypeError):
+    except (AttributeError, TypeError, IndexError):
         return deg
 
 def formatSog(values):
