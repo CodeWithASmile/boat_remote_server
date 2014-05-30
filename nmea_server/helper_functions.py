@@ -65,7 +65,7 @@ class NmeaWatchField(WatchField):
         else:
             return super(NmeaWatchField, self).getValue()
 
-class AnchorWatchField(NMEAWatchField):
+class AnchorWatchField(NmeaWatchField):
     """Represents how far boat is from its anchor"""
 
     def __init__(self, name, sentence, fields, value=ERROR_STRING,
