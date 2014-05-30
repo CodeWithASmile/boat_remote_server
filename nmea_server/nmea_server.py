@@ -41,7 +41,7 @@ def setup_logging(default_path='logging.json', default_level=logging.INFO,
 def set_anchor_watch():
     awf = nmeaDataSource.getWatchField("drift")
     awf.__class__ = AnchorWatchField
-    awf.setAnchor
+    awf.setAnchor()
 
 
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
@@ -49,7 +49,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         """Respond to a GET request."""
         # Send response headers
-        print "GET: %s" % self.path
+        #print "GET: %s" % self.path
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.send_header('Access-Control-Allow-Origin','*')
