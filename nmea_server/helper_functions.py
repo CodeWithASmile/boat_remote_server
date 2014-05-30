@@ -87,8 +87,8 @@ class AnchorWatchField(NmeaWatchField):
     def updateValueFromMessage(self, msg):
         super(AnchorWatchField, self).updateValueFromMessage(msg)
         try:
-            self.current_lat = self.values[0]
-            self.current_lon = self.values[1]
+            self.current_lat = float(self.values[0])
+            self.current_lon = float(self.values[1])
         except IndexError:
             self.current_lat = None
             self.current_lon = None
