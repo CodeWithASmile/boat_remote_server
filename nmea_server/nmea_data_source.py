@@ -11,7 +11,7 @@ class NmeaDataSource(threading.Thread):
     lock = threading.Lock()
 
     def __init__(self, host, port, watchFields):
-        logger = logging.getLogger(__name__)
+        self.self.logger = logging.getself.logger(__name__)
         self.host = host
         self.port = port
         self.watchFields = watchFields
@@ -25,13 +25,13 @@ class NmeaDataSource(threading.Thread):
             self.socket = socket(AF_INET, SOCK_STREAM)
             self.socket.connect((self.host, self.port))
             self.connected = True
-            logger.info("Connected to %s:%d" % (self.host, self.port))
+            self.logger.info("Connected to %s:%d" % (self.host, self.port))
         except AttributeError as error:
-            logger.info("Unable to connect:", error)
+            self.logger.info("Unable to connect:", error)
             self.connected = False
             
     def close(self):
-        logger.info("called nmeaDataSource.close())")
+        self.logger.info("called nmeaDataSource.close())")
         self.connected = False
         
 
@@ -68,8 +68,8 @@ class NmeaDataSource(threading.Thread):
                         # catches unknown message types
                         pass
                     except:
-                        logger.info("Something shitty has happened. Offender is:")
-                        logger.info(self.sentence)
+                        self.logger.info("Something shitty has happened. Offender is:")
+                        self.logger.info(self.sentence)
                         raise
 
         self.socket.close()
@@ -86,11 +86,11 @@ class NmeaDataSource(threading.Thread):
     def printWatchData(self):
         watchData = {}
         NmeaDataSource.lock.acquire()
-        logger.info("printing watch data")
+        self.logger.info("printing watch data")
         for watchField in self.watchFields:
-            logger.info(watchField.getName())
+            self.logger.info(watchField.getName())
             watchData[watchField.getName()] = watchField.getValue()
-            logger.info(watchData[watchField.getName()])
+            self.logger.info(watchData[watchField.getName()])
         NmeaDataSource.lock.release()
         #print watchData
         result = json.dumps(watchData)
