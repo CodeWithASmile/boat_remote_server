@@ -50,7 +50,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         """Respond to a GET request."""
         # Send response headers
-        #print "GET: %s" % self.path
+        logger.info("GET: %s" % self.path)
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.send_header('Access-Control-Allow-Origin','*')
@@ -78,16 +78,16 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_POST(self):
         """Respond to a POST request."""
         # Send response headers
-        print "POST: %s" % self.path
+        logger.info("POST: %s" % self.path)
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
         path = self.path.lstrip('/')
         if (path == "toggle_lights"):
-            print "Toggling lights!"
+            logger.debug("Toggling Lights!")
             controller.toggle_lights()
         if (path == "set_anchor_watch"):
-            print "Setting Anchor Watch!"
+            logger.debug("Setting Anchor Watch!")
             set_anchor_watch()
             
         
