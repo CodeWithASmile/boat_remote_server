@@ -62,6 +62,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 data = json.dumps(testWatchData)
             else:
                 # Get the latest data from the nmeaDataSource
+                logger.info("Printing watch data")
                 data = nmeaDataSource.printWatchData()
         elif (path in approved_files):
             f=open(fname.lstrip('/'),'r')

@@ -85,6 +85,7 @@ class NmeaDataSource(threading.Thread):
 
     def printWatchData(self):
         watchData = {}
+        self.logger.info("before lock")
         NmeaDataSource.lock.acquire()
         self.logger.info("printing watch data")
         for watchField in self.watchFields:
