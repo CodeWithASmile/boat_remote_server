@@ -4,13 +4,14 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>43957f8a-e2e0-40d0-90fc-e2aba9af70ab</ProjectGuid>
-    <ProjectHome>.</ProjectHome>
-    <StartupFile>nmea_server.py</StartupFile>
+    <ProjectHome>
+    </ProjectHome>
+    <StartupFile>boat_remote_server.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>nmea_server</Name>
+    <Name>boat_remote_server</Name>
     <RootNamespace>nmea_server</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -27,7 +28,7 @@
     <Compile Include="helper_functions.py" />
     <Compile Include="control.py" />
     <Compile Include="nmea_data_source.py" />
-    <Compile Include="nmea_server.py" />
+    <Compile Include="boat_remote_server.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="index.html" />

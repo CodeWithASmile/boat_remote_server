@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "nmea_server", "nmea_server\nmea_server.pyproj", "{43957F8A-E2E0-40D0-90FC-E2ABA9AF70AB}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "boat_remote_server", "nmea_server\boat_remote_server.pyproj", "{43957F8A-E2E0-40D0-90FC-E2ABA9AF70AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
