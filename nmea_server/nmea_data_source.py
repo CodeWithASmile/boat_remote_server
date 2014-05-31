@@ -11,7 +11,7 @@ class NmeaDataSource(threading.Thread):
     lock = threading.Lock()
 
     def __init__(self, host, port, watchFields):
-        self.self.logger = logging.getlogger(__name__)
+        self.logger = logging.getlogger(__name__)
         self.host = host
         self.port = port
         self.watchFields = watchFields
