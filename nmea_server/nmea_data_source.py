@@ -86,13 +86,16 @@ class NmeaDataSource(threading.Thread):
     def printWatchData(self):
         watchData = {}
         self.logger.info("before lock")
-        NmeaDataSource.lock.acquire()
-        self.logger.info("printing watch data")
-        for watchField in self.watchFields:
-            self.logger.info(watchField.getName())
-            watchData[watchField.getName()] = watchField.getValue()
-            self.logger.info(watchData[watchField.getName()])
-        NmeaDataSource.lock.release()
+        try:
+            NmeaDataSource.lock.acquire()
+            self.logger.info("printing watch data")
+            for watchField in self.watchFields:
+                self.logger.debug(watchField.getName())
+                watchData[watchField.getName()] = watchField.getValue()
+                self.logger.debug(watchData[watchField.getName()])
+            NmeaDataSource.lock.release()
+        except:
+            self.logger.exception(sys.exc_info()[0])
         #print watchData
         result = json.dumps(watchData)
         return result
