@@ -89,9 +89,6 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.send_header("Content-type", "text/html")
         self.end_headers()
         path = self.path.lstrip('/')
-        if (path == "toggle_lights"):
-            logger.debug("Toggling Lights!")
-            controller.toggle_lights()
         if (path == "set_anchor_watch"):
             logger.debug("Setting Anchor Watch!")
             set_anchor_watch()
@@ -104,9 +101,6 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 if __name__ == '__main__':
     setup_logging()
     logger = logging.getLogger(__name__)
-    if control:
-        from control import Controller
-        controller = Controller()
     # initialize tcp port
     nmeaDataSource = NmeaDataSource(NMEA_HOST, NMEA_PORT, watchFields)
     if not test:

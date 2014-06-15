@@ -49,5 +49,3 @@ watchFields = [NmeaWatchField(name="lat", sentence="RMC", fields=["latitude"],
                               formatFunction=formatWindSpeed),
                AnchorWatchField(name="drift", sentence="RMC", fields=["latitude", "longitude"])
                ]
-
-control = True
