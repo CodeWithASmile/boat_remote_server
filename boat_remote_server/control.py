@@ -1,5 +1,10 @@
 import BV4111
 
+WATERMAKER_FLUSH = 5 #should not run without 6
+WATERMAKER = 6
+HEATER = 7
+LIGHTS = 8
+
 class Controller(object):
     """Provides functionality for controlling the GPIO board"""
 
