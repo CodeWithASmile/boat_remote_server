@@ -72,6 +72,8 @@ class AnchorWatchField(NmeaWatchField):
     def __init__(self, name, sentence, fields, value=ERROR_STRING,
                  timeout=5):
         self.resetAnchor()
+        self.current_lat = None
+        self.current_lon = None
         super(AnchorWatchField, self).__init__(name, sentence=sentence, fields=fields, value=value, 
                                                formatFunction=None, timeout=5)
     

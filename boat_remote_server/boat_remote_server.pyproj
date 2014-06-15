@@ -26,7 +26,6 @@
     <Compile Include="config.py" />
     <Compile Include="config_template.py" />
     <Compile Include="helper_functions.py" />
-    <Compile Include="control.py" />
     <Compile Include="nmea_data_source.py" />
     <Compile Include="boat_remote_server.py" />
   </ItemGroup>
