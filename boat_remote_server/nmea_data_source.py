@@ -50,7 +50,7 @@ class NmeaDataSource(threading.Thread):
                     sentence_header, comma, sentence_body = self.sentence.partition(',')
                     sentence_header = sentence_header.lstrip('$')
                     if not NmeaDataSource.lock.acquire(False):
-                        print "lock failed writing sentence"
+                        print "lock failed writing sentence " + self.sentence
                     else:
                         try:
                             self.sentences[sentence_header] = self.sentence
