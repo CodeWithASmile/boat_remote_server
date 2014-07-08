@@ -49,9 +49,13 @@ class NmeaDataSource(threading.Thread):
                     #print self.connected
                     sentence_header, comma, sentence_body = self.sentence.partition(',')
                     sentence_header = sentence_header.lstrip('$')
-                    NmeaDataSource.lock.acquire()
-                    self.sentences[sentence_header] = self.sentence
-                    NmeaDataSource.lock.release()
+                    if not NmeaDataSource.lock.acquire(False):
+                        print "lock failed writing sentence"
+                    else:
+                        try:
+                            self.sentences[sentence_header] = self.sentence
+                        finally:
+                            NmeaDataSource.lock.release()
                     try:
                         msg = pynmea2.parse(self.sentence)
                         #print self.sentence
@@ -60,10 +64,16 @@ class NmeaDataSource(threading.Thread):
                         #    print msg.temperature
                         #except:
                         #    pass
-                        NmeaDataSource.lock.acquire()
-                        for watchField in self.watchFields:
-                            watchField.updateValueFromMessage(msg)
-                        NmeaDataSource.lock.release()
+                        if not NmeaDataSource.lock.acquire(False):
+                            print "lock failed writing watchField"
+                        else:
+                            try:
+                            #NmeaDataSource.lock.acquire()
+                                for watchField in self.watchFields:
+                                    watchField.updateValueFromMessage(msg)
+                            finally:
+                                NmeaDataSource.lock.release()
+                        #NmeaDataSource.lock.release()
                     except ValueError as e:
                         # catches unknown message types
                         pass
@@ -76,23 +86,35 @@ class NmeaDataSource(threading.Thread):
 
     def printAllSentences(self):
         result = "<pre>"
-        NmeaDataSource.lock.acquire(0)
-        for sentence in self.sentences.values():
-            result += sentence + "<BR>"
-        NmeaDataSource.lock.release()
+        #NmeaDataSource.lock.acquire(0)
+        if not NmeaDataSource.lock.acquire(False):
+            print "lock failed reading all sentences"
+        else:
+            try:
+                for sentence in self.sentences.values():
+                    result += sentence + "<BR>"
+            finally:
+                NmeaDataSource.lock.release()
+        #NmeaDataSource.lock.release()
         result += "</pre>"
         return result
 
     def printWatchData(self):
         watchData = {}
         self.logger.info("before lock")
-        NmeaDataSource.lock.acquire(0)
-        self.logger.info("printing watch data")
-        for watchField in self.watchFields:
-            self.logger.debug(watchField.getName())
-            watchData[watchField.getName()] = watchField.getValue()
-            self.logger.debug(watchData[watchField.getName()])
-        NmeaDataSource.lock.release()
+        #NmeaDataSource.lock.acquire(0)
+        if not NmeaDataSource.lock.acquire(False):
+            print "lock failed reading watch data"
+        else:
+            try:
+                self.logger.info("printing watch data")
+                for watchField in self.watchFields:
+                    self.logger.debug(watchField.getName())
+                    watchData[watchField.getName()] = watchField.getValue()
+                    self.logger.debug(watchData[watchField.getName()])
+            finally:
+                NmeaDataSource.lock.release()
+        #NmeaDataSource.lock.release()
         #print watchData
         result = json.dumps(watchData)
         return result
