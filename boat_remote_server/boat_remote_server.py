@@ -13,6 +13,7 @@ from select import *
 import time, sys
 import json
 import BaseHTTPServer
+import urlparse
 import os
 import logging.config
 
@@ -43,6 +44,12 @@ def set_anchor_watch():
     awf = nmeaDataSource.getWatchField("drift")
     awf.__class__ = AnchorWatchField
     awf.setAnchor()
+
+def set_anchor_watch(lat,lon):
+    print "setting anchor watch to %s %s" % (lat, lon)
+    awf = nmeaDataSource.getWatchField("drift")
+    awf.__class__ = AnchorWatchField
+    awf.setAnchor(lat,lon)
 
 def reset_anchor_watch():
     print "resetting anchor watch"
@@ -91,7 +98,12 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         path = self.path.lstrip('/')
         if (path == "set_anchor_watch"):
             logger.debug("Setting Anchor Watch!")
-            set_anchor_watch()
+            length = int(self.headers['Content-Length'])
+            post_data = urlparse.parse_qs(self.rfile.read(length).decode('utf-8'))
+            if ((post_data.has_key("lat")) and (post_data.has_key("lon"))):
+                set_anchor_watch(post_data["lat"][0],post_data["lon"][0])
+            else:
+                set_anchor_watch()
         if (path == "reset_anchor_watch"):
             logger.debug("Resetting Anchor Watch!")
             reset_anchor_watch()

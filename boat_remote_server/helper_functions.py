@@ -82,6 +82,15 @@ class AnchorWatchField(NmeaWatchField):
         self.anchor_lat = self.current_lat
         self.anchor_lon = self.current_lon
 
+    def setAnchor(self, lat, lon):
+        print "called set anchor"
+        type(lat)
+        print lat
+        type(lon)
+        print lon
+        self.anchor_lat = float(lat)
+        self.anchor_lon = float(lon)
+
     def resetAnchor(self):
         self.anchor_lat = None
         self.anchor_lon = None
