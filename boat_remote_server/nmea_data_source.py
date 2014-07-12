@@ -49,13 +49,7 @@ class NmeaDataSource(threading.Thread):
                     #print self.connected
                     sentence_header, comma, sentence_body = self.sentence.partition(',')
                     sentence_header = sentence_header.lstrip('$')
-                    if not NmeaDataSource.lock.acquire(False):
-                        print "lock failed writing sentence " + self.sentence
-                    else:
-                        try:
-                            self.sentences[sentence_header] = self.sentence
-                        finally:
-                            NmeaDataSource.lock.release()
+                    self.sentences[sentence_header] = self.sentence
                     try:
                         msg = pynmea2.parse(self.sentence)
                         #print self.sentence
@@ -86,16 +80,8 @@ class NmeaDataSource(threading.Thread):
 
     def printAllSentences(self):
         result = "<pre>"
-        #NmeaDataSource.lock.acquire(0)
-        if not NmeaDataSource.lock.acquire(False):
-            print "lock failed reading all sentences"
-        else:
-            try:
-                for sentence in self.sentences.values():
-                    result += sentence + "<BR>"
-            finally:
-                NmeaDataSource.lock.release()
-        #NmeaDataSource.lock.release()
+        for sentence in self.sentences.values():
+            result += sentence + "<BR>"
         result += "</pre>"
         return result
 
