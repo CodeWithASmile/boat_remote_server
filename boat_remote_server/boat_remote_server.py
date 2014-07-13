@@ -23,21 +23,11 @@ from helper_functions import *
 from nmea_data_source import NmeaDataSource
 from config import *
 
-def setup_logging(default_path='logging.json', default_level=logging.INFO,
-    env_key='LOG_CFG'):
+def setup_logging():
     """Setup logging configuration
 
     """
-    path = basePath + "/" + default_path
-    value = os.getenv(env_key, None)
-    if value:
-        path = value
-    if os.path.exists(path):
-        with open(path, 'rt') as f:
-            loggingConfig = json.load(f)
-        logging.config.dictConfig(loggingConfig)
-    else:
-        logging.basicConfig(level=default_level)
+    logging.basicConfig(level=default_level)
 
 def set_anchor_watch():
     print "setting anchor watch"

@@ -5,6 +5,8 @@ from helper_functions import *
 
 test = False
 
+default_level=logging.INFO
+
 HTTP_HOST = ''
 HTTP_PORT = 8082 # The port that the HTTP data will be output on
 
