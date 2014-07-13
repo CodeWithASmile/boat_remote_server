@@ -105,7 +105,7 @@ if __name__ == '__main__':
         nmeaDataSource.start()
 
     httpd = BaseHTTPServer.HTTPServer((HTTP_HOST, HTTP_PORT), MyHandler)
-    print time.asctime(), "Server Starts - %s:%s" % (HTTP_HOST, HTTP_PORT)
+    logger.info(time.asctime() + " Server Starts - %s:%s" % (HTTP_HOST, HTTP_PORT))
     try:
         logger.info("Serving Forever")
         httpd.serve_forever()

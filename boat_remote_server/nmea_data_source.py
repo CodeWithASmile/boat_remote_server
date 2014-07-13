@@ -51,7 +51,7 @@ class NmeaDataSource(threading.Thread):
                     self.sentences[sentence_header] = self.sentence
                     try:
                         msg = pynmea2.parse(self.sentence)
-                        self.logger.debug("Sentence type: %s" % msg.type)
+                        self.logger.debug("Sentence type: %s" % msg.sentence_types)
                         if not NmeaDataSource.lock.acquire(False):
                             self.logger.error("Lock failed writing watchField")
                         else:
@@ -61,7 +61,7 @@ class NmeaDataSource(threading.Thread):
                             finally:
                                 NmeaDataSource.lock.release()
                     except ValueError as e:
-                        self.logger.error("Unkown message type received")
+                        self.logger.debug("Unknown message type received")
                     except:
                         self.logger.error("Something shitty has happened. Offender is:")
                         self.logger.error(self.sentence)
