@@ -27,7 +27,7 @@ class NmeaDataSource(threading.Thread):
             self.connected = True
             self.logger.info("Connected to %s:%d" % (self.host, self.port))
         except AttributeError as error:
-            self.logger.info("Unable to connect:", error)
+            self.logger.error("Unable to connect:", error)
             self.connected = False
             
     def close(self):
@@ -45,37 +45,27 @@ class NmeaDataSource(threading.Thread):
             if c=='\n': # end of sentence
             # should check checksum...
                 if (self.sentence[0]=='$'):
-                    #print self.sentence
-                    #print self.connected
+                    self.logger.debug("Received sentence: %s" % self.sentence)
                     sentence_header, comma, sentence_body = self.sentence.partition(',')
                     sentence_header = sentence_header.lstrip('$')
                     self.sentences[sentence_header] = self.sentence
                     try:
                         msg = pynmea2.parse(self.sentence)
-                        #print self.sentence
-                        #print msg.type
-                        #try:
-                        #    print msg.temperature
-                        #except:
-                        #    pass
+                        self.logger.debug("Sentence type: %s" % msg.type)
                         if not NmeaDataSource.lock.acquire(False):
-                            print "lock failed writing watchField"
+                            self.logger.error("Lock failed writing watchField")
                         else:
                             try:
-                            #NmeaDataSource.lock.acquire()
                                 for watchField in self.watchFields:
                                     watchField.updateValueFromMessage(msg)
                             finally:
                                 NmeaDataSource.lock.release()
-                        #NmeaDataSource.lock.release()
                     except ValueError as e:
-                        # catches unknown message types
-                        pass
+                        self.logger.error("Unkown message type received")
                     except:
-                        self.logger.info("Something shitty has happened. Offender is:")
-                        self.logger.info(self.sentence)
+                        self.logger.error("Something shitty has happened. Offender is:")
+                        self.logger.error(self.sentence)
                         raise
-
         self.socket.close()
 
     def printAllSentences(self):
@@ -88,10 +78,9 @@ class NmeaDataSource(threading.Thread):
     def printWatchData(self):
         watchData = {}
         if not NmeaDataSource.lock.acquire(False):
-            print "lock failed reading watch data"
+            self.logger.error("Lock failed reading watch data")
         else:
             try:
-                self.logger.debug("printing watch data")
                 for watchField in self.watchFields:
                     self.logger.debug(watchField.getName())
                     watchData[watchField.getName()] = watchField.getValue()

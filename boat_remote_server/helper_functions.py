@@ -5,6 +5,7 @@ from datetime import datetime
 import pynmea2
 import re
 import math
+import logging
 
 ERROR_STRING = "~"
 
@@ -17,9 +18,11 @@ class WatchField(object):
         self.formatFunction = formatFunction
         self.lastUpdated = datetime.now()
         self.timeout = timeout
+        self.logger = logging.getLogger(__name__)
 
     def getValue(self):
         if ((datetime.now()-self.lastUpdated).seconds > self.timeout):
+            self.logger.debug("Field timeout: %s" % self.name)
             return ERROR_STRING
         elif (self.formatFunction is not None):
             return self.formatFunction(self.values)
@@ -53,11 +56,9 @@ class NmeaWatchField(WatchField):
     def updateValueFromMessage(self, msg):
         values = []
         if (getattr(msg,"sentence_type",None) == self.sentence):
-            #print self.sentence
             for field in self.fields:
-                #print field
                 values.append(str(getattr(msg, field, ERROR_STRING)))
-            #print values
+            self.logger.debug("Setting %s to %s" % (self.name, values))
             self.setValues(values)
 
     def getValue(self):
@@ -78,18 +79,19 @@ class AnchorWatchField(NmeaWatchField):
                                                formatFunction=None, timeout=5)
     
     def setAnchor(self):
-        print "called set anchor"
         self.anchor_lat = self.current_lat
         self.anchor_lon = self.current_lon
+        self.logger.info("Anchor position = %f,%f" % (self.anchor_lat, self.anchor_lon))
+        self.logger.info("Drift = %s" % self.calculateDrift())
 
     def setAnchor(self, lat, lon):
         print "called set anchor"
-        type(lat)
-        print lat
-        type(lon)
-        print lon
         self.anchor_lat = float(lat)
         self.anchor_lon = float(lon)
+        self.logger.info("Anchor position = %f,%f" % (self.anchor_lat, self.anchor_lon))
+        self.logger.info("Current position = %f,%f" % (self.current_lat, self.current_lon))
+        self.logger.info("Drift = %s" % self.calculateDrift())
+                                                   
 
     def resetAnchor(self):
         self.anchor_lat = None
