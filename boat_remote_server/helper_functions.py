@@ -6,6 +6,8 @@ import pynmea2
 import re
 import math
 import logging
+import json
+import os
 
 ERROR_STRING = "~"
 
@@ -72,44 +74,55 @@ class AnchorWatchField(NmeaWatchField):
 
     def __init__(self, name, sentence, fields, value=ERROR_STRING,
                  timeout=5):
-        self.resetAnchor()
-        self.current_lat = None
-        self.current_lon = None
+        self.file_path = "anchor_location.txt"
+        self.restoreAnchor()
+        self.currentLoc = []
         super(AnchorWatchField, self).__init__(name, sentence=sentence, fields=fields, value=value, 
                                                formatFunction=None, timeout=5)
-    
+
+    def storeAnchor(self):
+        with open(self.file_path, 'w') as outfile:
+            json.dump(self.anchorLoc, outfile)
+
+    def restoreAnchor(self):
+        try:
+            with open(self.file_path, 'r') as infile:
+                self.anchorLoc =json.load(infile)
+        except IOError:
+            self.anchorLoc = []
+
+
     def setAnchor(self):
-        self.anchor_lat = self.current_lat
-        self.anchor_lon = self.current_lon
-        self.logger.info("Anchor position = %f,%f" % (self.anchor_lat, self.anchor_lon))
+        self.anchorLoc = self.currentLoc
+        self.storeAnchor()
+        self.logger.info("Anchor position = %f,%f" % (self.anchorLoc[0], self.anchorLoc[1]))
         self.logger.info("Drift = %s" % self.calculateDrift())
 
-    def setAnchor(self, lat, lon):
+    def setAnchorLoc(self, lat, lon):
         print "called set anchor"
-        self.anchor_lat = float(lat)
-        self.anchor_lon = float(lon)
-        self.logger.info("Anchor position = %f,%f" % (self.anchor_lat, self.anchor_lon))
-        self.logger.info("Current position = %f,%f" % (self.current_lat, self.current_lon))
+        self.anchorLoc = [float(lat), float(lon)]
+        self.storeAnchor()
+        self.logger.info("Anchor position = %f,%f" % (self.anchorLoc[0], self.anchorLoc[1]))
+        self.logger.info("Current position = %f,%f" % (self.currentLoc[0], self.currentLoc[1]))
         self.logger.info("Drift = %s" % self.calculateDrift())
                                                    
 
     def resetAnchor(self):
-        self.anchor_lat = None
-        self.anchor_lon = None
+        self.logger.info("Resetting Anchor")
+        self.anchorLoc = []
+        os.remove(self.file_path)
 
     def updateValueFromMessage(self, msg):
         super(AnchorWatchField, self).updateValueFromMessage(msg)
         try:
-            self.current_lat = float(self.values[0])
-            self.current_lon = float(self.values[1])
+            self.currentLoc = [float(self.values[0]), float(self.values[1])]
         except IndexError:
-            self.current_lat = None
-            self.current_lon = None
+            self.currentLoc = []
 
     def getValue(self):
         if ((datetime.now()-self.lastUpdated).seconds > self.timeout):
             return ERROR_STRING
-        if self.anchor_lat is not None:
+        if len(self.anchorLoc) > 0 and len(self.currentLoc) > 0:
             self.drift = self.calculateDrift()
             return self.drift;
         else:  
@@ -122,12 +135,12 @@ class AnchorWatchField(NmeaWatchField):
         degrees_to_radians = math.pi/180.0
         
         # phi = 90 - latitude
-        phi1 = (90.0 - self.anchor_lat)*degrees_to_radians
-        phi2 = (90.0 - self.current_lat)*degrees_to_radians
+        phi1 = (90.0 - self.anchorLoc[0])*degrees_to_radians
+        phi2 = (90.0 - self.currentLoc[0])*degrees_to_radians
         
         # theta = longitude
-        theta1 = self.anchor_lon*degrees_to_radians
-        theta2 = self.current_lon*degrees_to_radians
+        theta1 = self.anchorLoc[1]*degrees_to_radians
+        theta2 = self.currentLoc[1]*degrees_to_radians
         
         # Compute spherical distance from spherical coordinates.
         

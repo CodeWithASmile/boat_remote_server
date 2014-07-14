@@ -34,10 +34,10 @@ def set_anchor_watch():
     awf.__class__ = AnchorWatchField
     awf.setAnchor()
 
-def set_anchor_watch(lat,lon):
+def set_anchor_watch_loc(lat,lon):
     awf = nmeaDataSource.getWatchField("drift")
     awf.__class__ = AnchorWatchField
-    awf.setAnchor(lat,lon)
+    awf.setAnchorLoc(lat,lon)
 
 def reset_anchor_watch():
     awf = nmeaDataSource.getWatchField("drift")
@@ -86,7 +86,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             post_data = urlparse.parse_qs(self.rfile.read(length).decode('utf-8'))
             logger.debug("Parameters received: %s" % post_data)
             if ((post_data.has_key("lat")) and (post_data.has_key("lon"))):
-                set_anchor_watch(post_data["lat"][0],post_data["lon"][0])
+                set_anchor_watch_loc(post_data["lat"][0],post_data["lon"][0])
             else:
                 set_anchor_watch()
         if (path == "reset_anchor_watch"):

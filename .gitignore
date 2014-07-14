@@ -2,3 +2,4 @@ nmea_server/config.py
 boat_remote_server.sln
 boat_remote_server/boat_remote_server.pyproj
 boat_remote_server/config.py
+boat_remote_server/anchor_location.txt
