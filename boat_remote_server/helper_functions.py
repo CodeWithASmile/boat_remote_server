@@ -14,60 +14,60 @@ ERROR_STRING = "~"
 class WatchField(object):
     """Represents a field which will be displayed on a pebble watch"""
     
-    def __init__(self, name, value=ERROR_STRING, formatFunction=None, timeout=5):
+    def __init__(self, name, value=ERROR_STRING, format_function=None, timeout=5):
         self.name = name
         self.values = [value]
-        self.formatFunction = formatFunction
-        self.lastUpdated = datetime.now()
+        self.format_function = format_function
+        self.last_updated = datetime.now()
         self.timeout = timeout
         self.logger = logging.getLogger(__name__)
 
-    def getValue(self):
-        if ((datetime.now()-self.lastUpdated).seconds > self.timeout):
+    def get_value(self):
+        if ((datetime.now()-self.last_updated).seconds > self.timeout):
             self.logger.debug("Field timeout: %s" % self.name)
             return ERROR_STRING
-        elif (self.formatFunction is not None):
-            return self.formatFunction(self.values)
+        elif (self.format_function is not None):
+            return self.format_function(self.values)
         else:
             return ' '.join(self.values)
             
-    def setValues(self, values):
+    def set_values(self, values):
         self.values = values;
-        self.lastUpdated = datetime.now();
+        self.last_updated = datetime.now();
 
-    def getName(self):
+    def get_name(self):
         return self.name;
 
 class NmeaWatchField(WatchField):
     """Represents an NMEA field which will be displayed on a pebble watch"""
 
-    def __init__(self, name, sentence, fields, value=ERROR_STRING, formatFunction=None,
+    def __init__(self, name, sentence, fields, value=ERROR_STRING, format_function=None,
                  timeout=5):
         self.sentence=sentence
         self.fields = fields
         super(NmeaWatchField, self).__init__(name, value=value,
-                                             formatFunction=formatFunction,
+                                             format_function=format_function,
                                              timeout=timeout);
 
-    def getSentence(self):
+    def get_sentence(self):
         return self.sentence;
 
-    def getFields(self):
+    def get_fields(self):
         return self.fields;
 
-    def updateValueFromMessage(self, msg):
+    def update_value_from_message(self, msg):
         values = []
         if (getattr(msg,"sentence_type",None) == self.sentence):
             for field in self.fields:
                 values.append(str(getattr(msg, field, ERROR_STRING)))
             self.logger.debug("Setting %s to %s" % (self.name, values))
-            self.setValues(values)
+            self.set_values(values)
 
-    def getValue(self):
+    def get_value(self):
         if (len(self.values) == 0):
             return ERROR_STRING
         else:
-            return super(NmeaWatchField, self).getValue()
+            return super(NmeaWatchField, self).get_value()
 
 class AnchorWatchField(NmeaWatchField):
     """Represents how far boat is from its anchor"""
@@ -75,72 +75,72 @@ class AnchorWatchField(NmeaWatchField):
     def __init__(self, name, sentence, fields, value=ERROR_STRING,
                  timeout=5):
         self.file_path = "anchor_location.txt"
-        self.restoreAnchor()
-        self.currentLoc = []
+        self.restore_anchor()
+        self.current_loc = []
         super(AnchorWatchField, self).__init__(name, sentence=sentence, fields=fields, value=value, 
                                                formatFunction=None, timeout=5)
 
-    def storeAnchor(self):
+    def store_anchor(self):
         with open(self.file_path, 'w') as outfile:
-            json.dump(self.anchorLoc, outfile)
+            json.dump(self.anchor_loc, outfile)
 
-    def restoreAnchor(self):
+    def restore_anchor(self):
         try:
             with open(self.file_path, 'r') as infile:
-                self.anchorLoc =json.load(infile)
+                self.anchor_loc =json.load(infile)
         except IOError:
-            self.anchorLoc = []
+            self.anchor_loc = []
 
 
-    def setAnchor(self):
-        self.anchorLoc = self.currentLoc
-        self.storeAnchor()
-        self.logger.info("Anchor position = %f,%f" % (self.anchorLoc[0], self.anchorLoc[1]))
-        self.logger.info("Drift = %s" % self.calculateDrift())
+    def set_anchor(self):
+        self.anchor_loc = self.current_loc
+        self.store_anchor()
+        self.logger.info("Anchor position = %f,%f" % (self.anchor_loc[0], self.anchor_loc[1]))
+        self.logger.info("Drift = %s" % self.calculate_drift())
 
-    def setAnchorLoc(self, lat, lon):
+    def set_anchor_loc(self, lat, lon):
         print "called set anchor"
-        self.anchorLoc = [float(lat), float(lon)]
-        self.storeAnchor()
-        self.logger.info("Anchor position = %f,%f" % (self.anchorLoc[0], self.anchorLoc[1]))
-        self.logger.info("Current position = %f,%f" % (self.currentLoc[0], self.currentLoc[1]))
-        self.logger.info("Drift = %s" % self.calculateDrift())
+        self.anchor_loc = [float(lat), float(lon)]
+        self.store_anchor()
+        self.logger.info("Anchor position = %f,%f" % (self.anchor_loc[0], self.anchor_loc[1]))
+        self.logger.info("Current position = %f,%f" % (self.current_loc[0], self.current_loc[1]))
+        self.logger.info("Drift = %s" % self.calculate_drift())
                                                    
 
-    def resetAnchor(self):
+    def reset_anchor(self):
         self.logger.info("Resetting Anchor")
-        self.anchorLoc = []
+        self.anchor_loc = []
         os.remove(self.file_path)
 
-    def updateValueFromMessage(self, msg):
-        super(AnchorWatchField, self).updateValueFromMessage(msg)
+    def update_value_from_message(self, msg):
+        super(AnchorWatchField, self).update_value_from_message(msg)
         try:
-            self.currentLoc = [float(self.values[0]), float(self.values[1])]
+            self.current_loc = [float(self.values[0]), float(self.values[1])]
         except IndexError:
-            self.currentLoc = []
+            self.current_loc = []
 
-    def getValue(self):
-        if ((datetime.now()-self.lastUpdated).seconds > self.timeout):
+    def get_value(self):
+        if ((datetime.now()-self.last_updated).seconds > self.timeout):
             return ERROR_STRING
-        if len(self.anchorLoc) > 0 and len(self.currentLoc) > 0:
-            self.drift = self.calculateDrift()
+        if len(self.anchor_loc) > 0 and len(self.current_loc) > 0:
+            self.drift = self.calculate_drift()
             return self.drift;
         else:  
             return ERROR_STRING
             
 
-    def calculateDrift(self):
+    def calculate_drift(self):
         # Convert latitude and longitude to 
         # spherical coordinates in radians.
         degrees_to_radians = math.pi/180.0
         
         # phi = 90 - latitude
-        phi1 = (90.0 - self.anchorLoc[0])*degrees_to_radians
-        phi2 = (90.0 - self.currentLoc[0])*degrees_to_radians
+        phi1 = (90.0 - self.anchor_loc[0])*degrees_to_radians
+        phi2 = (90.0 - self.current_loc[0])*degrees_to_radians
         
         # theta = longitude
-        theta1 = self.anchorLoc[1]*degrees_to_radians
-        theta2 = self.currentLoc[1]*degrees_to_radians
+        theta1 = self.anchor_loc[1]*degrees_to_radians
+        theta2 = self.current_loc[1]*degrees_to_radians
         
         # Compute spherical distance from spherical coordinates.
         
@@ -166,7 +166,7 @@ def deg_to_dms(deg):
     m = abs(float(deg) - d) * 60
     return d, m
 
-def formatLatitude(values):
+def format_latitude(values):
     deg = values[0]
     try:
         d, m = deg_to_dms(deg)
@@ -179,7 +179,7 @@ def formatLatitude(values):
     except ValueError:
         return deg
 
-def formatLat(values):
+def format_lat(values):
     try:
         deg = values[0]
         dir = values[1]
@@ -190,7 +190,7 @@ def formatLat(values):
         return deg
     
 
-def formatLongitude(values):
+def format_longitude(values):
     deg = values[0]
     try:
         d, m = deg_to_dms(deg)
@@ -203,7 +203,7 @@ def formatLongitude(values):
     except ValueError:
         return deg
 
-def formatLon(values):
+def format_lon(values):
     try:
         deg = values[0]
         dir = values[1]
@@ -213,21 +213,21 @@ def formatLon(values):
     except (AttributeError, TypeError, IndexError):
         return deg
 
-def formatSog(values):
-    sog = values[0]
+def format_SOG(values):
+    SOG = values[0]
     try:
         return "%.1f kts" % float(sog);
     except ValueError:
-        return sog;
+        return SOG
 
-def formatAngle(values):
+def format_angle(values):
     angle = values[0]
     try:
         return "%03d%s" % (int(float(angle)),u'\N{DEGREE SIGN}');
     except ValueError:
         return angle
 
-def formatDistance(values):
+def format_distance(values):
     try:
         distance = values[0]
         unit = values[1]
@@ -237,7 +237,7 @@ def formatDistance(values):
     except IndexError:
         return distance
 
-def formatDepth(values):
+def format_depth(values):
     try:
         depth = values[0]
         offset = values[1]
@@ -245,14 +245,14 @@ def formatDepth(values):
     except (ValueError, IndexError):
         return depth;
 
-def formatDistanceNM(values):
+def format_distance_NM(values):
     distance = values[0]
     try:
         return "%.1f NM" % float(distance);
     except ValueError:
         return distance
 
-def formatWindAngle(values):
+def format_wind_angle(values):
     angle = values[0]
     try:
         a = int(float(angle))
@@ -263,7 +263,7 @@ def formatWindAngle(values):
     except ValueError:
         return angle
 
-def formatWindSpeed(values):
+def format_wind_speed(values):
     try:
         speed = values[0]
         unit = values[1]
@@ -277,43 +277,6 @@ def formatWindSpeed(values):
     except (ValueError, IndexError):
         return values
 
-def formatType(values):
+def format_type(values):
     t = values[0]
     return "(" + t + ")"
-
-# Test data
-
-testWatchData = { 'lat': '66°33.123N',
-                  'lon': '001°33.123E',
-                  'sog': '4.5 kts',
-                  'cog': '102°',
-                  'boat_speed': '4.2 kts',
-                  'depth': '15.2 m',
-                  'wind_speed': '12.7 kts',
-                  'wind_angle': '54° P',
-                  'dtw': '1.4',
-                  'dtw_unit': 'NM',
-                  'btw': '256°',
-                  'xte': '0.02',
-                  'xte_unit': 'NM',
-                  'dir_to_steer': 'L',
-                  'heading_to_steer': '256°',
-                  'heading_to_steer_type': '(M)',
-                  'waypoint': 'Waypoint 1',
-                  'wpt_lat': '21°34.105',
-                  'wpt_lat_dir': 'S',
-                  'wpt_lon': '311°22.543',
-                  'wpt_lon_dir': 'W',
-                  'temp': '24.2',
-                  'temp_unit': '°C',
-                  'heading': '102°',
-                  'distance_total': '102 NM',
-                  'distance_reset': '57 NM'};
-        
-
-            
-        
-        
-            
-        
-    

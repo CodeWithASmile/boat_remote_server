@@ -3,51 +3,45 @@
 
 from helper_functions import *
 
-test = False
-
-default_level=logging.INFO
-
 HTTP_HOST = ''
 HTTP_PORT = 8082 # The port that the HTTP data will be output on
 
 NMEA_HOST = '192.168.5.200'     # The host with the NMEA TCP feed
 NMEA_PORT = 10110              # The port with the NMEA TCP feed
 
-basePath = "/home/pi/boat_remote_server/boat_remote_server";
-
-watchFields = [NmeaWatchField(name="lat", sentence="RMC", fields=["latitude"],
-                              formatFunction=formatLatitude),
+watch_fields = [NmeaWatchField(name="lat", sentence="RMC", fields=["latitude"],
+                              formatFunction=format_latitude),
                NmeaWatchField(name="lon", sentence="RMC", fields=["longitude"],
-                              formatFunction=formatLongitude),
+                              formatFunction=format_longitude),
                NmeaWatchField(name="cog", sentence="RMC", fields=["true_course"],
-                              formatFunction=formatAngle),
+                              formatFunction=format_angle),
                NmeaWatchField(name="sog", sentence="RMC", fields=["spd_over_grnd"],
-                              formatFunction=formatSog),
+                              format_function=format_SOG),
                NmeaWatchField(name="xte", sentence="APB", fields=["cross_track_err_mag", "cross_track_unit"],
-                              formatFunction=formatDistance),
+                              format_function=format_distance),
                NmeaWatchField(name="waypoint", sentence="BWC", fields=["waypoint_name"]),
                NmeaWatchField(name="wpt_lat", sentence="BWC", fields=["lat_next", "lat_next_direction"],
-                              formatFunction=formatLat),
+                              format_function=format_lat),
                NmeaWatchField(name="wpt_lon", sentence="BWC", fields=["lon_next", "lon_next_direction"],
-                              formatFunction=formatLon),       
+                              format_function=format_lon),       
                NmeaWatchField(name="dtw", sentence="BWC", fields=["range_next", "range_unit"],
-                              formatFunction=formatDistance),
+                              format_function=format_distance),
                NmeaWatchField(name="btw", sentence="BWC", fields=["true_track"],
-                              formatFunction=formatAngle),
+                              format_function=format_angle),
                NmeaWatchField(name="depth", sentence="DPT", fields=["depth", "offset"],
-                              formatFunction=formatDepth),
+                              format_function=format_depth),
                NmeaWatchField(name="temp", sentence="MTW", fields=["temperature", "units"]),
                NmeaWatchField(name="boat_speed", sentence="VHW", fields=["water_speed_knots"],
-                              formatFunction=formatSog),
+                              format_function=format_SOG),
                NmeaWatchField(name="heading", sentence="VHW", fields=["heading_true"],
-                              formatFunction=formatAngle),
+                              format_function=format_angle),
                NmeaWatchField(name="distance_total", sentence="VLW", fields=["trip_distance"],
-                              formatFunction=formatDistanceNM),
+                              format_function=format_distance_NM),
                NmeaWatchField(name="distance_reset", sentence="VLW", fields=["trip_distance_reset"],
-                              formatFunction=formatDistanceNM),
+                              format_function=format_distance_NM),
                NmeaWatchField(name="wind_angle", sentence="MWV", fields=["wind_angle"],
-                              formatFunction=formatWindAngle),
+                              format_function=format_wind_angle),
                NmeaWatchField(name="wind_speed", sentence="MWV", fields=["wind_speed", "wind_speed_units"],
-                              formatFunction=formatWindSpeed),
+                              format_function=format_wind_speed),
                AnchorWatchField(name="drift", sentence="RMC", fields=["latitude", "longitude"])
                ]

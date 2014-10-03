@@ -30,19 +30,19 @@ def setup_logging():
     logging.basicConfig(level=default_level)
 
 def set_anchor_watch():
-    awf = nmeaDataSource.getWatchField("drift")
+    awf = nmea_data_source.get_watch_field("drift")
     awf.__class__ = AnchorWatchField
-    awf.setAnchor()
+    awf.set_anchor()
 
 def set_anchor_watch_loc(lat,lon):
-    awf = nmeaDataSource.getWatchField("drift")
+    awf = nmea_data_source.get_watch_field("drift")
     awf.__class__ = AnchorWatchField
-    awf.setAnchorLoc(lat,lon)
+    awf.set_anchor_loc(lat,lon)
 
 def reset_anchor_watch():
-    awf = nmeaDataSource.getWatchField("drift")
+    awf = nmea_data_source.get_watch_field("drift")
     awf.__class__ = AnchorWatchField
-    awf.resetAnchor()
+    awf.reset_anchor()
 
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
@@ -56,20 +56,16 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.end_headers()
         path = self.path.lstrip('/')
         if (path == "watch"):
-            if test:
-                # Get mocked up data from helper_functions
-                data = json.dumps(testWatchData)
-            else:
-                # Get the latest data from the nmeaDataSource
-                logger.debug("Printing watch data")
-                data = nmeaDataSource.printWatchData()
+            # Get the latest data from the nmeaDataSource
+            logger.debug("Printing watch data")
+            data = nmea_data_source.print_watch_data()
         elif (path in approved_files):
             f=open(fname.lstrip('/'),'r')
             data = f.read()
             f.close()
         elif (path=="NMEA"):
             logger.debug("Printing all sentences")
-            data = nmeaDataSource.printAllSentences()     
+            data = nmea_data_source.print_all_sentences()     
         self.wfile.write(data)
 
     def do_POST(self):
@@ -99,10 +95,9 @@ if __name__ == '__main__':
     setup_logging()
     logger = logging.getLogger(__name__)
     # initialize tcp port
-    nmeaDataSource = NmeaDataSource(NMEA_HOST, NMEA_PORT, watchFields)
-    if not test:
-        nmeaDataSource.connect()
-        nmeaDataSource.start()
+    nmea_data_source = NmeaDataSource(NMEA_HOST, NMEA_PORT, watch_fields)
+    nmea_data_source.connect()
+    nmea_data_source.start()
 
     httpd = BaseHTTPServer.HTTPServer((HTTP_HOST, HTTP_PORT), MyHandler)
     logger.info(time.asctime() + " Server Starts - %s:%s" % (HTTP_HOST, HTTP_PORT))
@@ -111,8 +106,8 @@ if __name__ == '__main__':
         httpd.serve_forever()
     except KeyboardInterrupt:
         logger.info("Interrupted By Keyboard")
-    nmeaDataSource.close()
-    nmeaDataSource.join()
+    nmea_data_source.close()
+    nmea_data_source.join()
     httpd.server_close()
     logger.info(time.asctime(), "Server Stops - %s:%s" % (HTTP_HOST, HTTP_PORT))
 

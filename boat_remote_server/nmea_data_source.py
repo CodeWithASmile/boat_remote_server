@@ -10,11 +10,11 @@ from socket import *
 class NmeaDataSource(threading.Thread):
     lock = threading.Lock()
 
-    def __init__(self, host, port, watchFields):
+    def __init__(self, host, port, watch_fields):
         self.logger = logging.getLogger(__name__)
         self.host = host
         self.port = port
-        self.watchFields = watchFields
+        self.watch_fields = watch_fields
         self.connected = False
         self.sentence = ""
         self.sentences = {}
@@ -34,7 +34,6 @@ class NmeaDataSource(threading.Thread):
         self.logger.info("called nmeaDataSource.close())")
         self.connected = False
         
-
     def run(self):
         while (self.connected):
             c = self.socket.recv(1)
@@ -56,8 +55,8 @@ class NmeaDataSource(threading.Thread):
                             self.logger.error("Lock failed writing watchField")
                         else:
                             try:
-                                for watchField in self.watchFields:
-                                    watchField.updateValueFromMessage(msg)
+                                for watchField in self.watch_fields:
+                                    watchField.update_value_from_message(msg)
                             finally:
                                 NmeaDataSource.lock.release()
                     except ValueError as e:
@@ -68,30 +67,30 @@ class NmeaDataSource(threading.Thread):
                         raise
         self.socket.close()
 
-    def printAllSentences(self):
+    def print_all_sentences(self):
         result = "<pre>"
         for sentence in self.sentences.values():
             result += sentence + "<BR>"
         result += "</pre>"
         return result
 
-    def printWatchData(self):
-        watchData = {}
+    def print_watch_data(self):
+        watch_data = {}
         if not NmeaDataSource.lock.acquire(False):
             self.logger.error("Lock failed reading watch data")
         else:
             try:
-                for watchField in self.watchFields:
-                    self.logger.debug(watchField.getName())
-                    watchData[watchField.getName()] = watchField.getValue()
-                    self.logger.debug(watchData[watchField.getName()])
+                for watch_field in self.watch_fields:
+                    self.logger.debug(watch_field.get_name())
+                    watch_data[watch_field.get_name()] = watch_field.get_value()
+                    self.logger.debug(watch_data[watch_field.get_name()])
             finally:
                 NmeaDataSource.lock.release()
-        result = json.dumps(watchData)
+        result = json.dumps(watch_data)
         return result
 
-    def getWatchField(self, field):
-        for watchField in self.watchFields:
-            if (watchField.getName() == field):
-                return watchField;
+    def get_watch_field(self, field):
+        for watch_field in self.watch_fields:
+            if (watch_field.get_name() == field):
+                return watch_field
 
