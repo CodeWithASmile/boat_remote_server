@@ -78,7 +78,7 @@ class AnchorWatchField(NmeaWatchField):
         self.restore_anchor()
         self.current_loc = []
         super(AnchorWatchField, self).__init__(name, sentence=sentence, fields=fields, value=value, 
-                                               formatFunction=None, timeout=5)
+                                               format_function=None, timeout=5)
 
     def store_anchor(self):
         with open(self.file_path, 'w') as outfile:
@@ -216,7 +216,7 @@ def format_lon(values):
 def format_SOG(values):
     SOG = values[0]
     try:
-        return "%.1f kts" % float(sog);
+        return "%.1f kts" % float(SOG);
     except ValueError:
         return SOG
 

@@ -27,7 +27,7 @@ def setup_logging():
     """Setup logging configuration
 
     """
-    logging.basicConfig(level=default_level)
+    logging.basicConfig(level=logging.INFO)
 
 def set_anchor_watch():
     awf = nmea_data_source.get_watch_field("drift")
@@ -59,10 +59,6 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             # Get the latest data from the nmeaDataSource
             logger.debug("Printing watch data")
             data = nmea_data_source.print_watch_data()
-        elif (path in approved_files):
-            f=open(fname.lstrip('/'),'r')
-            data = f.read()
-            f.close()
         elif (path=="NMEA"):
             logger.debug("Printing all sentences")
             data = nmea_data_source.print_all_sentences()     
