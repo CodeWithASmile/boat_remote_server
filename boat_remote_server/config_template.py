@@ -10,11 +10,11 @@ NMEA_HOST = '192.168.5.200'     # The host with the NMEA TCP feed
 NMEA_PORT = 10110              # The port with the NMEA TCP feed
 
 watch_fields = [NmeaWatchField(name="lat", sentence="RMC", fields=["latitude"],
-                              formatFunction=format_latitude),
+                              format_function=format_latitude),
                NmeaWatchField(name="lon", sentence="RMC", fields=["longitude"],
-                              formatFunction=format_longitude),
+                              format_function=format_longitude),
                NmeaWatchField(name="cog", sentence="RMC", fields=["true_course"],
-                              formatFunction=format_angle),
+                              format_function=format_angle),
                NmeaWatchField(name="sog", sentence="RMC", fields=["spd_over_grnd"],
                               format_function=format_SOG),
                NmeaWatchField(name="xte", sentence="APB", fields=["cross_track_err_mag", "cross_track_unit"],
